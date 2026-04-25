@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form Pengajuan</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #F5F4F0;
+      --surface: #FFFFFF;
+      --border: #E2E0D8;
+      --border-focus: #A8A39A;
+      --text: #1A1917;
+      --text-muted: #7A786F;
+      --text-hint: #B0ADA5;
+      --accent: #2D2C29;
+      --warning-bg: #FEF3E2;
+      --warning-border: #F59E0B;
+      --warning-text: #92400E;
+      --warning-title: #78350F;
+      --success-bg: #ECFDF5;
+      --success-border: #10B981;
+      --success-text: #065F46;
+      --error-bg: #FEF2F2;
+      --error-border: #EF4444;
+      --error-text: #991B1B;
+      --radius: 10px;
+      --radius-sm: 6px;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 40px 16px 60px;
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 32px;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    .page-header .logo-mark {
+      width: 44px; height: 44px;
+      background: var(--accent);
+      border-radius: 12px;
+      margin: 0 auto 14px;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .page-header .logo-mark svg {
+      width: 22px; height: 22px; fill: none;
+      stroke: #fff; stroke-width: 1.8;
+      stroke-linecap: round; stroke-linejoin: round;
+    }
+
+    .page-header h1 {
+      font-size: 22px; font-weight: 600;
+      letter-spacing: -0.02em; color: var(--text);
+    }
+
+    .page-header p {
+      font-size: 14px; color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      max-width: 640px;
+      margin: 0 auto;
+      overflow: hidden;
+      animation: fadeUp 0.5s 0.1s ease both;
+    }
+
+    /* Tab nav */
+    .tab-nav {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tab-btn {
+      padding: 14px 16px;
+      font-family: inherit; font-size: 13px; font-weight: 500;
+      color: var(--text-muted); background: transparent;
+      border: none; cursor: pointer;
+      transition: color 0.2s, background 0.2s;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+    }
+
+    .tab-btn:hover { color: var(--text); background: var(--bg); }
+
+    .tab-btn.active {
+      color: var(--text);
+      border-bottom-color: var(--accent);
+      background: var(--surface);
+    }
+
+    /* Form panels */
+    .form-panel { display: none; padding: 28px 28px 32px; }
+    .form-panel.active { display: block; }
+
+    /* Warning box */
+    .warning-box {
+      background: var(--warning-bg);
+      border: 1px solid #FDE68A;
+      border-left: 3px solid var(--warning-border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      margin-bottom: 24px;
+    }
+
+    .warning-box .w-title {
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--warning-title); margin-bottom: 8px;
+    }
+
+    .warning-box ul { padding-left: 16px; }
+    .warning-box ul li {
+      font-size: 13px; color: var(--warning-text);
+      line-height: 1.6; margin-bottom: 3px;
+    }
+    .warning-box ul li:last-child { margin-bottom: 0; }
+
+    /* Section label */
+    .section-label {
+      font-size: 10px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--text-hint);
+      margin: 22px 0 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-label:first-of-type { margin-top: 0; }
+
+    /* Fields */
+    .field { margin-bottom: 14px; }
+
+    .field label {
+      display: block;
+      font-size: 13px; font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+    }
+
+    .field label .req { color: #EF4444; margin-left: 2px; }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      padding: 9px 12px;
+      font-family: inherit; font-size: 14px;
+      color: var(--text);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      transition: border-color 0.15s, box-shadow 0.15s;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    .field select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237A786F' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(0,0,0,0.06);
+      background: var(--surface);
+    }
+
+    .field textarea { resize: vertical; min-height: 88px; line-height: 1.6; }
+
+    .field input[type="file"] {
+      font-size: 13px; color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    /* Submit button */
+    .submit-btn {
+      width: 100%; margin-top: 24px;
+      padding: 12px 20px;
+      font-family: inherit; font-size: 14px; font-weight: 600;
+      color: #fff; background: var(--accent);
+      border: none; border-radius: var(--radius);
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+
+    .submit-btn:hover { opacity: 0.88; }
+    .submit-btn:active { transform: scale(0.99); }
+    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .submit-btn .spinner {
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+
+    .submit-btn.loading .spinner { display: block; }
+    .submit-btn.loading .btn-text { display: none; }
+
+    /* Alert messages */
+    .alert {
+      display: none; margin-top: 14px;
+      padding: 12px 14px; border-radius: var(--radius-sm);
+      font-size: 13px; line-height: 1.6;
+    }
+
+    .alert.success {
+      background: var(--success-bg);
+      border: 1px solid var(--success-border);
+      color: var(--success-text);
+    }
+
+    .alert.error {
+      background: var(--error-bg);
+      border: 1px solid var(--error-border);
+      color: var(--error-text);
+    }
+
+    .alert.show { display: block; animation: fadeUp 0.3s ease; }
+
+    /* Animations */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .row-2 { grid-template-columns: 1fr; }
+      .form-panel { padding: 20px 18px 28px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-header">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24">
+        <path d="M9 12h6M12 9v6M3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0"/>
+      </svg>
+    </div>
+    <h1>Portal Pengajuan</h1>
+    <p>Pengajuan Pembelian &amp; Reimbursement</p>
+  </div>
+
+  <div class="card">
+    <div class="tab-nav">
+      <button class="tab-btn active" onclick="switchTab('pembelian', this)">Pengajuan Pembelian</button>
+      <button class="tab-btn" onclick="switchTab('reimburse', this)">Reimbursement</button>
+    </div>
+
+    <!-- FORM PENGAJUAN PEMBELIAN -->
+    <div id="tab-pembelian" class="form-panel active">
+      <div class="warning-box">
+        <div class="w-title">Perhatian sebelum mengisi form</div>
+        <ul>
+          <li>Harga di atas <strong>Rp 1.000.000</strong> wajib melampirkan nota printer atau bon stempel toko.</li>
+          <li>Barang elektronik wajib memastikan <strong>garansi resmi</strong> sebelum melakukan pembelian.</li>
+        </ul>
+      </div>
+
+      <div class="section-label">Identitas Pengajuan</div>
+      <div class="row-2">
+        <div class="field">
+          <label>Nama Lengkap <span class="req">*</span></label>
+          <input type="text" id="p-nama" placeholder="Nama lengkap kamu">
+        </div>
+        <div class="field">
+          <label>Departemen <span class="req">*</span></label>
+          <select id="p-dept">
+            <option value="">-- Pilih --</option>
+            <option>Finance</option>
+            <option>Penagihan</option>
+            <option>Berkas</option>
+            <option>Akad</option>
+            <option>Marketing</option>
+            <option>Agensi</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="section-label">Detail Item</div>
+      <div class="field">
+        <label>Nama Item / Barang <span class="req">*</span></label>
+        <input type="text" id="p-item" placeholder="Contoh: Laptop Dell Inspiron 15">
+      </div>
+      <div class="row-2">
+        <div class="field">
+          <label>Jumlah <span class="req">*</span></label>
+          <input type="number" id="p-jumlah" placeholder="1" min="1">
+        </div>
+        <div class="field">
+          <label>Harga Satuan (Rp) <span class="req">*</span></label>
+          <input type="number" id="p-harga" placeholder="500000" min="0">
+        </div>
+      </div>
+      <div class="field">
+        <label>Nama Vendor / Toko <span class="req">*</span></label>
+        <input type="text" id="p-vendor" placeholder="Contoh: PT. Maju Teknologi">
+      </div>
+
+      <div class="section-label">Keterangan</div>
+      <div class="field">
+        <label>Alasan Pengajuan <span class="req">*</span></label>
+        <textarea id="p-alasan" placeholder="Jelaskan keperluan pembelian ini..."></textarea>
+      </div>
+
+      <button class="submit-btn" id="btn-pembelian" onclick="submitPembelian()">
+        <span class="spinner"></span>
+        <span class="btn-text">Kirim Pengajuan</span>
+      </button>
+      <div class="alert success" id="alert-pembelian-ok">Pengajuan berhasil dikirim! Data sudah masuk ke Google Sheets.</div>
+      <div class="alert error" id="alert-pembelian-err">Gagal mengirim. Periksa koneksi internet dan coba lagi.</div>
+    </div>
+
+    <!-- FORM REIMBURSEMENT -->
+    <div id="tab-reimburse" class="form-panel">
+      <div class="warning-box">
+        <div class="w-title">Perhatian sebelum mengisi form</div>
+        <ul>
+          <li>Harga di atas <strong>Rp 1.000.000</strong> wajib melampirkan nota printer atau bon stempel toko.</li>
+          <li>Barang elektronik wajib memastikan <strong>garansi resmi</strong> sebelum melakukan pembelian.</li>
+        </ul>
+      </div>
+
+      <div class="section-label">Identitas Pengajuan</div>
+      <div class="row-2">
+        <div class="field">
+          <label>Nama Lengkap <span class="req">*</span></label>
+          <input type="text" id="r-nama" placeholder="Nama lengkap kamu">
+        </div>
+        <div class="field">
+          <label>Departemen <span class="req">*</span></label>
+          <select id="r-dept">
+            <option value="">-- Pilih --</option>
+            <option>Finance</option>
+            <option>Penagihan</option>
+            <option>Berkas</option>
+            <option>Akad</option>
+            <option>Marketing</option>
+            <option>Agensi</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="section-label">Informasi Bank</div>
+      <div class="row-2">
+        <div class="field">
+          <label>Jenis Bank <span class="req">*</span></label>
+          <select id="r-bank">
+            <option value="">-- Pilih --</option>
+            <option>BCA</option>
+            <option>BNI</option>
+            <option>BRI</option>
+            <option>Mandiri</option>
+            <option>CIMB Niaga</option>
+            <option>Bank lainnya</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>No. Rekening <span class="req">*</span></label>
+          <input type="text" id="r-rekening" placeholder="1234567890">
+        </div>
+      </div>
+
+      <div class="section-label">Detail Pengeluaran</div>
+      <div class="row-2">
+        <div class="field">
+          <label>Tanggal Pengeluaran <span class="req">*</span></label>
+          <input type="date" id="r-tanggal">
+        </div>
+        <div class="field">
+          <label>Nominal (Rp) <span class="req">*</span></label>
+          <input type="number" id="r-nominal" placeholder="150000" min="0">
+        </div>
+      </div>
+      <div class="field">
+        <label>Keterangan / Keperluan <span class="req">*</span></label>
+        <input type="text" id="r-keterangan" placeholder="Contoh: Makan siang meeting klien">
+      </div>
+      <div class="field">
+        <label>Upload Bukti (foto/PDF)</label>
+        <input type="file" id="r-bukti" accept="image/*,.pdf">
+      </div>
+
+      <button class="submit-btn" id="btn-reimburse" onclick="submitReimburse()">
+        <span class="spinner"></span>
+        <span class="btn-text">Kirim Reimbursement</span>
+      </button>
+      <div class="alert success" id="alert-reimburse-ok">Reimbursement berhasil dikirim! Data sudah masuk ke Google Sheets.</div>
+      <div class="alert error" id="alert-reimburse-err">Gagal mengirim. Periksa koneksi internet dan coba lagi.</div>
+    </div>
+  </div>
+
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwW0GbrXNhu1ZamE73F4xgxJ3C82AyOmXW_NC8MyQfN5VEKLSlZ6KZdAnkOSRSVRdBo/exec";
+
+    function switchTab(name, btn) {
+      document.querySelectorAll('.form-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-' + name).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    function getVal(id) {
+      return document.getElementById(id).value.trim();
+    }
+
+    function showAlert(id, type) {
+      ['alert-pembelian-ok','alert-pembelian-err','alert-reimburse-ok','alert-reimburse-err'].forEach(a => {
+        const el = document.getElementById(a);
+        el.classList.remove('show');
+      });
+      const el = document.getElementById(id);
+      el.classList.add('show');
+      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function setLoading(btnId, loading) {
+      const btn = document.getElementById(btnId);
+      btn.disabled = loading;
+      btn.classList.toggle('loading', loading);
+    }
+
+    async function sendData(payload, btnId, successId, errorId) {
+      setLoading(btnId, true);
+      try {
+        await fetch(SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        showAlert(successId);
+        // Reset form fields
+        document.querySelectorAll('#' + document.querySelector('.form-panel.active').id + ' input, #' + document.querySelector('.form-panel.active').id + ' select, #' + document.querySelector('.form-panel.active').id + ' textarea').forEach(el => {
+          if (el.type === 'file') return;
+          el.value = '';
+        });
+      } catch (err) {
+        showAlert(errorId);
+      } finally {
+        setLoading(btnId, false);
+      }
+    }
+
+    function submitPembelian() {
+      const nama   = getVal('p-nama');
+      const dept   = getVal('p-dept');
+      const item   = getVal('p-item');
+      const jumlah = getVal('p-jumlah');
+      const harga  = getVal('p-harga');
+      const vendor = getVal('p-vendor');
+      const alasan = getVal('p-alasan');
+
+      if (!nama || !dept || !item || !jumlah || !harga || !vendor || !alasan) {
+        alert('Harap lengkapi semua field yang wajib diisi (*).');
+        return;
+      }
+
+      const payload = {
+        jenis_form: 'Pengajuan Pembelian',
+        nama, departemen: dept, nama_item: item,
+        jumlah, harga_satuan: harga,
+        total: (parseInt(jumlah) * parseInt(harga)).toString(),
+        vendor, alasan
+      };
+
+      sendData(payload, 'btn-pembelian', 'alert-pembelian-ok', 'alert-pembelian-err');
+    }
+
+    function submitReimburse() {
+      const nama       = getVal('r-nama');
+      const dept       = getVal('r-dept');
+      const bank       = getVal('r-bank');
+      const rekening   = getVal('r-rekening');
+      const tanggal    = getVal('r-tanggal');
+      const nominal    = getVal('r-nominal');
+      const keterangan = getVal('r-keterangan');
+
+      if (!nama || !dept || !bank || !rekening || !tanggal || !nominal || !keterangan) {
+        alert('Harap lengkapi semua field yang wajib diisi (*).');
+        return;
+      }
+
+      const payload = {
+        jenis_form: 'Reimbursement',
+        nama, departemen: dept,
+        jenis_bank: bank, no_rekening: rekening,
+        tanggal_pengeluaran: tanggal,
+        nominal, keterangan
+      };
+
+      sendData(payload, 'btn-reimburse', 'alert-reimburse-ok', 'alert-reimburse-err');
+    }
+  </script>
+</body>
+</html>
