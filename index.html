@@ -79,33 +79,82 @@
       animation: fadeUp 0.5s 0.1s ease both;
     }
 
-    /* Tab nav */
-    .tab-nav {
+    /* Form type selector */
+    .type-selector {
+      padding: 20px 28px 0;
+    }
+
+    .type-selector-label {
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--text-hint); margin-bottom: 10px;
+    }
+
+    .type-options {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      border-bottom: 1px solid var(--border);
+      gap: 8px;
+      margin-bottom: 0;
     }
 
-    .tab-btn {
-      padding: 14px 16px;
-      font-family: inherit; font-size: 13px; font-weight: 500;
-      color: var(--text-muted); background: transparent;
-      border: none; cursor: pointer;
-      transition: color 0.2s, background 0.2s;
-      border-bottom: 2px solid transparent;
-      margin-bottom: -1px;
+    .type-option {
+      position: relative;
     }
 
-    .tab-btn:hover { color: var(--text); background: var(--bg); }
+    .type-option input[type="radio"] {
+      position: absolute; opacity: 0; width: 0; height: 0;
+    }
 
-    .tab-btn.active {
+    .type-option label {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      font-size: 13px; font-weight: 500; color: var(--text-muted);
+    }
+
+    .type-option label:hover {
+      border-color: var(--border-focus);
+      background: var(--bg);
+    }
+
+    .type-option input[type="radio"]:checked + label {
+      border-color: var(--accent);
       color: var(--text);
-      border-bottom-color: var(--accent);
       background: var(--surface);
     }
 
+    .type-option .radio-dot {
+      width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0;
+      border: 1.5px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.15s;
+    }
+
+    .type-option input[type="radio"]:checked + label .radio-dot {
+      border-color: var(--accent);
+      background: var(--accent);
+    }
+
+    .type-option input[type="radio"]:checked + label .radio-dot::after {
+      content: '';
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #fff; display: block;
+    }
+
+    .type-option .option-icon {
+      font-size: 16px;
+    }
+
+    .divider-line {
+      height: 1px; background: var(--border);
+      margin: 20px 0 0;
+    }
+
     /* Form panels */
-    .form-panel { display: none; padding: 28px 28px 32px; }
+    .form-panel { display: none; padding: 24px 28px 32px; }
     .form-panel.active { display: block; }
 
     /* Warning box */
@@ -194,6 +243,7 @@
     }
 
     .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
 
     /* Submit button */
     .submit-btn {
@@ -244,7 +294,22 @@
 
     .alert.show { display: block; animation: fadeUp 0.3s ease; }
 
-    /* Animations */
+    /* Placeholder state */
+    .placeholder-state {
+      padding: 32px 28px;
+      text-align: center;
+      color: var(--text-hint);
+      font-size: 14px;
+      display: block;
+    }
+
+    .placeholder-state svg {
+      width: 32px; height: 32px;
+      stroke: var(--text-hint); fill: none;
+      stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
+      margin: 0 auto 10px; display: block;
+    }
+
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(12px); }
       to   { opacity: 1; transform: translateY(0); }
@@ -254,10 +319,10 @@
       to { transform: rotate(360deg); }
     }
 
-    /* Responsive */
     @media (max-width: 480px) {
-      .row-2 { grid-template-columns: 1fr; }
+      .row-2, .row-3 { grid-template-columns: 1fr; }
       .form-panel { padding: 20px 18px 28px; }
+      .type-selector { padding: 16px 18px 0; }
     }
   </style>
 </head>
@@ -270,17 +335,41 @@
       </svg>
     </div>
     <h1>Portal Pengajuan</h1>
-    <p>Pengajuan Pembelian &amp; Reimbursement</p>
+    <p>Pilih jenis form yang ingin diisi</p>
   </div>
 
   <div class="card">
-    <div class="tab-nav">
-      <button class="tab-btn active" onclick="switchTab('pembelian', this)">Pengajuan Pembelian</button>
-      <button class="tab-btn" onclick="switchTab('reimburse', this)">Reimbursement</button>
+
+    <!-- Pilihan jenis form -->
+    <div class="type-selector">
+      <div class="type-selector-label">Jenis Pengajuan</div>
+      <div class="type-options">
+        <div class="type-option">
+          <input type="radio" name="jenis" id="pilih-pembelian" value="pembelian" onchange="showForm('pembelian')">
+          <label for="pilih-pembelian">
+            <span class="radio-dot"></span>
+            <span>Pengajuan Pembelian</span>
+          </label>
+        </div>
+        <div class="type-option">
+          <input type="radio" name="jenis" id="pilih-reimburse" value="reimburse" onchange="showForm('reimburse')">
+          <label for="pilih-reimburse">
+            <span class="radio-dot"></span>
+            <span>Reimbursement</span>
+          </label>
+        </div>
+      </div>
+      <div class="divider-line"></div>
+    </div>
+
+    <!-- Placeholder sebelum dipilih -->
+    <div class="placeholder-state" id="placeholder">
+      <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2"/></svg>
+      Pilih jenis pengajuan di atas untuk mulai mengisi form
     </div>
 
     <!-- FORM PENGAJUAN PEMBELIAN -->
-    <div id="tab-pembelian" class="form-panel active">
+    <div id="tab-pembelian" class="form-panel">
       <div class="warning-box">
         <div class="w-title">Perhatian sebelum mengisi form</div>
         <ul>
@@ -308,6 +397,10 @@
           </select>
         </div>
       </div>
+      <div class="field">
+        <label>Tanggal Pengajuan <span class="req">*</span></label>
+        <input type="date" id="p-tanggal">
+      </div>
 
       <div class="section-label">Detail Item</div>
       <div class="field">
@@ -323,6 +416,10 @@
           <label>Harga Satuan (Rp) <span class="req">*</span></label>
           <input type="number" id="p-harga" placeholder="500000" min="0">
         </div>
+      </div>
+      <div class="field">
+        <label>Total (Rp)</label>
+        <input type="text" id="p-total" placeholder="Otomatis terhitung" readonly style="background:#F5F4F0;color:var(--text-muted);cursor:default;">
       </div>
       <div class="field">
         <label>Nama Vendor / Toko <span class="req">*</span></label>
@@ -420,30 +517,55 @@
       <div class="alert success" id="alert-reimburse-ok">Reimbursement berhasil dikirim! Data sudah masuk ke Google Sheets.</div>
       <div class="alert error" id="alert-reimburse-err">Gagal mengirim. Periksa koneksi internet dan coba lagi.</div>
     </div>
+
   </div>
 
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwW0GbrXNhu1ZamE73F4xgxJ3C82AyOmXW_NC8MyQfN5VEKLSlZ6KZdAnkOSRSVRdBo/exec";
 
-    function switchTab(name, btn) {
+    function showForm(name) {
+      document.getElementById('placeholder').style.display = 'none';
       document.querySelectorAll('.form-panel').forEach(p => p.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       document.getElementById('tab-' + name).classList.add('active');
-      btn.classList.add('active');
     }
+
+    // Auto-hitung total saat jumlah atau harga berubah
+    document.addEventListener('DOMContentLoaded', function() {
+      const jumlahEl = document.getElementById('p-jumlah');
+      const hargaEl  = document.getElementById('p-harga');
+      const totalEl  = document.getElementById('p-total');
+
+      function hitungTotal() {
+        const j = parseFloat(jumlahEl.value) || 0;
+        const h = parseFloat(hargaEl.value)  || 0;
+        if (j > 0 && h > 0) {
+          totalEl.value = 'Rp ' + (j * h).toLocaleString('id-ID');
+        } else {
+          totalEl.value = '';
+        }
+      }
+
+      jumlahEl.addEventListener('input', hitungTotal);
+      jumlahEl.addEventListener('change', hitungTotal);
+      hargaEl.addEventListener('input', hitungTotal);
+      hargaEl.addEventListener('change', hitungTotal);
+
+      // Set default tanggal hari ini
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('p-tanggal').value = today;
+      document.getElementById('r-tanggal').value = today;
+    });
 
     function getVal(id) {
       return document.getElementById(id).value.trim();
     }
 
-    function showAlert(id, type) {
+    function showAlert(id) {
       ['alert-pembelian-ok','alert-pembelian-err','alert-reimburse-ok','alert-reimburse-err'].forEach(a => {
-        const el = document.getElementById(a);
-        el.classList.remove('show');
+        document.getElementById(a).classList.remove('show');
       });
-      const el = document.getElementById(id);
-      el.classList.add('show');
-      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      document.getElementById(id).classList.add('show');
+      document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
     function setLoading(btnId, loading) {
@@ -462,11 +584,15 @@
           body: JSON.stringify(payload)
         });
         showAlert(successId);
-        // Reset form fields
-        document.querySelectorAll('#' + document.querySelector('.form-panel.active').id + ' input, #' + document.querySelector('.form-panel.active').id + ' select, #' + document.querySelector('.form-panel.active').id + ' textarea').forEach(el => {
-          if (el.type === 'file') return;
+        document.querySelectorAll('#' + document.querySelector('.form-panel.active').id + ' input:not([readonly]), #' + document.querySelector('.form-panel.active').id + ' select, #' + document.querySelector('.form-panel.active').id + ' textarea').forEach(el => {
+          if (el.type === 'file' || el.type === 'radio') return;
           el.value = '';
         });
+        document.getElementById('p-total').value = '';
+        // Reset tanggal ke hari ini
+        const today = new Date().toISOString().split('T')[0];
+        if (document.getElementById('p-tanggal')) document.getElementById('p-tanggal').value = today;
+        if (document.getElementById('r-tanggal')) document.getElementById('r-tanggal').value = today;
       } catch (err) {
         showAlert(errorId);
       } finally {
@@ -475,24 +601,37 @@
     }
 
     function submitPembelian() {
-      const nama   = getVal('p-nama');
-      const dept   = getVal('p-dept');
-      const item   = getVal('p-item');
-      const jumlah = getVal('p-jumlah');
-      const harga  = getVal('p-harga');
-      const vendor = getVal('p-vendor');
-      const alasan = getVal('p-alasan');
+      const nama    = getVal('p-nama');
+      const dept    = getVal('p-dept');
+      const tanggal = getVal('p-tanggal');
+      const item    = getVal('p-item');
+      const jumlah  = getVal('p-jumlah');
+      const harga   = getVal('p-harga');
+      const vendor  = getVal('p-vendor');
+      const alasan  = getVal('p-alasan');
 
-      if (!nama || !dept || !item || !jumlah || !harga || !vendor || !alasan) {
-        alert('Harap lengkapi semua field yang wajib diisi (*).');
+      if (!nama || !dept || !tanggal || !item || !jumlah || !harga || !vendor || !alasan) {
+        const kosong = [];
+        if (!nama)    kosong.push('Nama Lengkap');
+        if (!dept)    kosong.push('Departemen');
+        if (!tanggal) kosong.push('Tanggal Pengajuan');
+        if (!item)    kosong.push('Nama Item');
+        if (!jumlah)  kosong.push('Jumlah');
+        if (!harga)   kosong.push('Harga Satuan');
+        if (!vendor)  kosong.push('Nama Vendor');
+        if (!alasan)  kosong.push('Alasan Pengajuan');
+        alert('Field belum diisi: ' + kosong.join(', '));
         return;
       }
 
+      const j = parseInt(jumlah) || 0;
+      const h = parseInt(harga)  || 0;
+
       const payload = {
         jenis_form: 'Pengajuan Pembelian',
-        nama, departemen: dept, nama_item: item,
-        jumlah, harga_satuan: harga,
-        total: (parseInt(jumlah) * parseInt(harga)).toString(),
+        nama, departemen: dept, tanggal_pengajuan: tanggal,
+        nama_item: item, jumlah, harga_satuan: harga,
+        total: (j * h).toString(),
         vendor, alasan
       };
 
